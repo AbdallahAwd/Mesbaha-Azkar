@@ -8,10 +8,7 @@ import 'app/themes/color.dart';
 Future<void> main() async {
   await GetStorage.init();
   index = GetStorage().read('themeIndex') ?? 0;
-  SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-    statusBarColor: mainColor[index],
-    systemNavigationBarColor: mainColor[index],
-  ));
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   runApp(const MyApp());
 }
 
