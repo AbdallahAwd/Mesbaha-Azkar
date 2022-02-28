@@ -1,4 +1,4 @@
-package com.example.mesbaha
+package com.ama.mesbaha
 
 import io.flutter.embedding.android.FlutterActivity
 
