@@ -176,7 +176,7 @@ class _HomeState extends State<Home> {
                       top: width / 10,
                       left: width / 2.8,
                       child: Text(
-                        GetStorage().read('drop'),
+                        GetStorage().read('drop') ?? '',
                         style: style().copyWith(fontSize: 15),
                       ),
                     ),
