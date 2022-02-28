@@ -5,6 +5,7 @@ import 'package:just_audio/just_audio.dart';
 import 'package:mesbaha/app/azkar/data/light_azkar.dart';
 import 'package:mesbaha/app/themes/color.dart';
 import 'azkar_builder.dart';
+import 'package:vector_math/vector_math_64.dart';
 
 class LightAzkar extends StatefulWidget {
   final azkar;
@@ -17,6 +18,8 @@ class LightAzkar extends StatefulWidget {
 class _LightAzkarState extends State<LightAzkar> with TickerProviderStateMixin {
   AudioPlayer player;
   AnimationController controller;
+  AnimationController zoomController;
+  Animation zoomAnimation;
   bool isExpand = true;
   @override
   void initState() {
@@ -26,6 +29,15 @@ class _LightAzkarState extends State<LightAzkar> with TickerProviderStateMixin {
         vsync: this,
         duration: const Duration(milliseconds: 400),
         reverseDuration: const Duration(milliseconds: 400));
+    zoomController = AnimationController(
+        vsync: this,
+        duration: const Duration(milliseconds: 500),
+        reverseDuration: const Duration(milliseconds: 500));
+    zoomAnimation = Tween<double>(begin: 1.0, end: 2).animate(
+        CurvedAnimation(parent: zoomController, curve: Curves.easeInOut))
+      ..addListener(() {
+        setState(() {});
+      });
   }
 
   @override
@@ -69,15 +81,29 @@ class _LightAzkarState extends State<LightAzkar> with TickerProviderStateMixin {
             interactive: true,
             radius: const Radius.circular(15),
             thickness: 8,
-            child: InteractiveViewer(
-              child: ListView.builder(
-                  itemBuilder: (context, index) => AzkarBuilder(
-                        azkarText: lightAzkar['azkar'][index],
-                        count: lightAzkar['count'][index],
-                        profet: lightAzkar['profit'][index],
-                        countIndex: lightAzkar['countIndex'][index],
-                      ),
-                  itemCount: lightAzkar['azkar'].length),
+            child: InkWell(
+              onDoubleTap: () {
+                if (zoomController.isCompleted) {
+                  zoomController.reverse();
+                } else {
+                  zoomController.forward();
+                }
+              },
+              child: Transform(
+                alignment: FractionalOffset.center,
+                transform: Matrix4.diagonal3(Vector3(zoomAnimation.value ?? 0,
+                    zoomAnimation.value ?? 0, zoomAnimation.value ?? 0)),
+                child: InteractiveViewer(
+                  child: ListView.builder(
+                      itemBuilder: (context, index) => AzkarBuilder(
+                            azkarText: lightAzkar['azkar'][index],
+                            count: lightAzkar['count'][index],
+                            profet: lightAzkar['profit'][index],
+                            countIndex: lightAzkar['countIndex'][index],
+                          ),
+                      itemCount: lightAzkar['azkar'].length),
+                ),
+              ),
             ),
           )),
     );
