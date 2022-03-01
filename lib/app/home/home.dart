@@ -204,7 +204,7 @@ class _HomeState extends State<Home> {
                           NotificationApi.cancelNotification(3);
                           NotificationApi.notify(
                               title: 'اذكـــر الـلـه',
-                              body: azkar[Random().nextInt(9)],
+                              body: azkar[Random().nextInt(11)],
                               channelKey: 'Azkar',
                               id: 3,
                               locked: false,
