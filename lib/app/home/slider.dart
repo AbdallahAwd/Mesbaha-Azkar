@@ -5,6 +5,7 @@ import 'package:mesbaha/app/themes/color.dart';
 
 import '../../custom_transition/up_to_down.dart';
 import '../azkar/azkar_sleep.dart';
+import '../azkar/notifecation/notifecation.dart';
 
 class SliderBuilder extends StatelessWidget {
   const SliderBuilder({Key key}) : super(key: key);
@@ -41,6 +42,8 @@ class SliderBuilder extends StatelessWidget {
                     azkar: text,
                   )));
             } else if (index == 1) {
+              NotificationApi.showScheduledNotification(
+                  body: 'انه وقت $text', title: text, id: 0, payload: text);
               Navigator.push(
                   context,
                   UpToDown(
