@@ -2,7 +2,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
-import 'package:mesbaha/app/additions/public_folder.dart';
 import 'package:mesbaha/app/azkar/data/light_azkar.dart';
 import 'package:mesbaha/app/themes/color.dart';
 import '../bannerAd/banner_ad.dart';
@@ -120,9 +119,7 @@ class _LightAzkarState extends State<LightAzkar> with TickerProviderStateMixin {
               child: Column(
                 children: [
                   SizedBox(
-                    height: PublicVariables.isReady
-                        ? MediaQuery.of(context).size.height - 130
-                        : MediaQuery.of(context).size.height - 90,
+                    height: MediaQuery.of(context).size.height - 130,
                     child: ListView.builder(
                         itemBuilder: (context, index) => AzkarBuilder(
                               azkarText: lightAzkar['azkar'][index],

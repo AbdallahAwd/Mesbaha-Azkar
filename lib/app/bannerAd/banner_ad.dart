@@ -4,8 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:mesbaha/app/bannerAd/ad_helper.dart';
 
-import '../additions/public_folder.dart';
-
 class BoxAd extends StatefulWidget {
   const BoxAd({Key key}) : super(key: key);
 
@@ -16,7 +14,7 @@ class BoxAd extends StatefulWidget {
 class _BoxAdState extends State<BoxAd> {
   AdSize size = AdSize.banner;
   BannerAd _bannerAd;
-
+  bool isReady = false;
   void initBanner() {
     _bannerAd = BannerAd(
       adUnitId: AdHelper.bannerAd,
@@ -24,7 +22,7 @@ class _BoxAdState extends State<BoxAd> {
       request: const AdRequest(),
       listener: BannerAdListener(onAdLoaded: (ad) {
         setState(() {
-          PublicVariables.isReady = true;
+          isReady = true;
         });
       }, onAdFailedToLoad: (ad, error) {
         log('Banner ad Error');
@@ -41,7 +39,7 @@ class _BoxAdState extends State<BoxAd> {
 
   @override
   Widget build(BuildContext context) {
-    if (PublicVariables.isReady) {
+    if (isReady) {
       return Container(
         width: size.width.toDouble(),
         height: 35,

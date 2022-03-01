@@ -6,7 +6,6 @@ import 'package:mesbaha/app/azkar/azkar_builder.dart';
 import 'package:mesbaha/app/azkar/data/dark_azkar.dart';
 import 'package:mesbaha/app/themes/color.dart';
 
-import '../additions/public_folder.dart';
 import '../bannerAd/banner_ad.dart';
 
 class DarkAzkar extends StatefulWidget {
@@ -121,9 +120,7 @@ class _DarkAzkarState extends State<DarkAzkar> with TickerProviderStateMixin {
               child: Column(
                 children: [
                   SizedBox(
-                    height: PublicVariables.isReady
-                        ? MediaQuery.of(context).size.height - 130
-                        : MediaQuery.of(context).size.height - 90,
+                    height: MediaQuery.of(context).size.height - 130,
                     child: ListView.builder(
                         itemBuilder: (context, index) => AzkarBuilder(
                               azkarText: darkAzkar['azkar'][index],
