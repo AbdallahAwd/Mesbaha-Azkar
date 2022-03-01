@@ -109,6 +109,32 @@ class _DarkAzkarState extends State<DarkAzkar> with TickerProviderStateMixin {
             ),
           ),
         ),
+        floatingActionButton: Container(
+          decoration: BoxDecoration(
+              border: Border.all(color: floatingColor, width: 2),
+              shape: BoxShape.circle),
+          child: FloatingActionButton(
+            backgroundColor: mainColor[index],
+            onPressed: () async {
+              await player.setAsset('assets/azkar2.mp3');
+              setState(() {
+                if (isExpand) {
+                  player.play();
+                  controller.forward();
+                  isExpand = !isExpand;
+                } else {
+                  player.stop();
+                  controller.reverse();
+                  isExpand = !isExpand;
+                }
+              });
+            },
+            child: AnimatedIcon(
+              icon: AnimatedIcons.play_pause,
+              progress: controller,
+            ),
+          ),
+        ),
       ),
     );
   }

@@ -52,60 +52,74 @@ class _LightAzkarState extends State<LightAzkar> with TickerProviderStateMixin {
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
-          appBar: AppBar(
-            title: Text(widget.azkar),
-            actions: [
-              IconButton(
-                  onPressed: () async {
-                    await player.setAsset('assets/azkar.mp3');
-                    setState(() {
-                      if (isExpand) {
-                        player.play();
-                        controller.forward();
-                        isExpand = !isExpand;
-                      } else {
-                        player.stop();
-                        controller.reverse();
-                        isExpand = !isExpand;
-                      }
-                    });
-                  },
-                  icon: AnimatedIcon(
-                    icon: AnimatedIcons.play_pause,
-                    progress: controller,
-                  )),
-            ],
-            backgroundColor: mainColor[index],
-          ),
-          body: Scrollbar(
-            interactive: true,
-            radius: const Radius.circular(15),
-            thickness: 8,
-            child: InkWell(
-              onDoubleTap: () {
-                if (zoomController.isCompleted) {
-                  zoomController.reverse();
-                } else {
-                  zoomController.forward();
-                }
-              },
-              child: Transform(
-                alignment: FractionalOffset.center,
-                transform: Matrix4.diagonal3(Vector3(zoomAnimation.value ?? 0,
-                    zoomAnimation.value ?? 0, zoomAnimation.value ?? 0)),
-                child: InteractiveViewer(
-                  child: ListView.builder(
-                      itemBuilder: (context, index) => AzkarBuilder(
-                            azkarText: lightAzkar['azkar'][index],
-                            count: lightAzkar['count'][index],
-                            profet: lightAzkar['profit'][index],
-                            countIndex: lightAzkar['countIndex'][index],
-                          ),
-                      itemCount: lightAzkar['azkar'].length),
-                ),
+        appBar: AppBar(
+          title: Text(widget.azkar),
+          actions: [
+            IconButton(
+                onPressed: () async {},
+                icon: AnimatedIcon(
+                  icon: AnimatedIcons.play_pause,
+                  progress: controller,
+                )),
+          ],
+          backgroundColor: mainColor[index],
+        ),
+        body: Scrollbar(
+          interactive: true,
+          radius: const Radius.circular(15),
+          thickness: 8,
+          child: InkWell(
+            onDoubleTap: () {
+              if (zoomController.isCompleted) {
+                zoomController.reverse();
+              } else {
+                zoomController.forward();
+              }
+            },
+            child: Transform(
+              alignment: FractionalOffset.center,
+              transform: Matrix4.diagonal3(Vector3(zoomAnimation.value ?? 0,
+                  zoomAnimation.value ?? 0, zoomAnimation.value ?? 0)),
+              child: InteractiveViewer(
+                child: ListView.builder(
+                    itemBuilder: (context, index) => AzkarBuilder(
+                          azkarText: lightAzkar['azkar'][index],
+                          count: lightAzkar['count'][index],
+                          profet: lightAzkar['profit'][index],
+                          countIndex: lightAzkar['countIndex'][index],
+                        ),
+                    itemCount: lightAzkar['azkar'].length),
               ),
             ),
-          )),
+          ),
+        ),
+        floatingActionButton: Container(
+          decoration: BoxDecoration(
+              border: Border.all(color: floatingColor, width: 2),
+              shape: BoxShape.circle),
+          child: FloatingActionButton(
+            backgroundColor: mainColor[index],
+            onPressed: () async {
+              await player.setAsset('assets/azkar.mp3');
+              setState(() {
+                if (isExpand) {
+                  player.play();
+                  controller.forward();
+                  isExpand = !isExpand;
+                } else {
+                  player.stop();
+                  controller.reverse();
+                  isExpand = !isExpand;
+                }
+              });
+            },
+            child: AnimatedIcon(
+              icon: AnimatedIcons.play_pause,
+              progress: controller,
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

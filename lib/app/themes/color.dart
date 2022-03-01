@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 int index = 0;
+const floatingColor = Color.fromARGB(255, 255, 255, 255);
 const List<Color> mainColor = [
   Color(0xff001F3C),
   Color(0xff0A4A00),
