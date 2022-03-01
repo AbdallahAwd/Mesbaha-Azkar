@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:digital_lcd/digital_lcd.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -6,9 +8,8 @@ import 'package:get_storage/get_storage.dart';
 import 'package:mesbaha/app/azkar/notifecation/notifecation.dart';
 import 'package:mesbaha/app/home/slider.dart';
 import 'package:mesbaha/app/themes/color.dart';
-import 'package:mesbaha/custom_transition/up_to_down.dart';
 
-import '../azkar/light.dart';
+import '../azkar/data/azkar_notification.dart';
 
 class Home extends StatefulWidget {
   const Home({Key key}) : super(key: key);
@@ -27,20 +28,8 @@ class _HomeState extends State<Home> {
     super.initState();
     GetStorage().read('drop');
     GetStorage().read('counter');
-    NotificationApi.init();
-    listenNotifications();
-  }
-
-  void listenNotifications() {
-    NotificationApi.onNotification.stream.listen(onClickNotification);
-  }
-
-  void onClickNotification(String payload) {
-    Navigator.push(
-        context,
-        UpToDown(LightAzkar(
-          azkar: payload,
-        )));
+    // NotificationApi.init();
+    // listenNotifications();
   }
 
   TextStyle style() {
@@ -58,7 +47,7 @@ class _HomeState extends State<Home> {
     return Scaffold(
       backgroundColor: mainColor[index],
       body: SliderDrawer(
-        slider: const SliderBuilder(),
+        slider: SliderBuilder(),
         key: key,
         appBar: SliderAppBar(
           appBarColor: mainColor[index],
@@ -212,6 +201,14 @@ class _HomeState extends State<Home> {
                             }
                           });
                           GetStorage().write('counter', counter);
+                          NotificationApi.cancelNotification(3);
+                          NotificationApi.notify(
+                              title: 'اذكـــر الـلـه',
+                              body: azkar[Random().nextInt(9)],
+                              channelKey: 'Azkar',
+                              id: 3,
+                              locked: false,
+                              notificationInterval: 11000);
                         },
                         child: Container(
                           width: 100,

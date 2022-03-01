@@ -1,14 +1,62 @@
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:mesbaha/app/azkar/notifecation/notifecation.dart';
 
 import 'app/home/home.dart';
 import 'app/themes/color.dart';
 
 Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   await GetStorage.init();
   index = GetStorage().read('themeIndex') ?? 0;
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+  AwesomeNotifications().initialize(
+    null,
+    [
+      NotificationChannel(
+        channelKey: 'lightAzkar',
+        channelName: 'Light',
+        channelDescription: 'Notification channel for Light Azkar',
+        defaultColor: mainColor[index],
+        ledColor: Colors.white,
+        playSound: true,
+        enableLights: true,
+        enableVibration: true,
+      ),
+      NotificationChannel(
+        channelKey: 'darkAzkar',
+        channelName: 'dark',
+        channelDescription: 'Notification channel for Dark Azkar',
+        defaultColor: mainColor[index],
+        ledColor: Colors.white,
+        playSound: true,
+        enableLights: true,
+        enableVibration: true,
+      ),
+      NotificationChannel(
+        channelKey: 'sleepAzkar',
+        channelName: 'sleep',
+        channelDescription: 'Notification channel for Sleep Azkar',
+        defaultColor: mainColor[index],
+        ledColor: Colors.white,
+        playSound: true,
+        enableLights: true,
+        enableVibration: true,
+      ),
+      NotificationChannel(
+        channelKey: 'Azkar',
+        channelName: 'azkar',
+        channelDescription: 'Notification channel for  Azkar',
+        defaultColor: mainColor[index],
+        ledColor: Colors.white,
+        playSound: true,
+        enableLights: true,
+        enableVibration: true,
+      ),
+    ],
+  );
   runApp(const MyApp());
 }
 
@@ -19,7 +67,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Electronic Rosary',
+      title: 'مسبحه الكترونيه',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
           primarySwatch: Colors.blue,

@@ -5,7 +5,6 @@ import 'package:just_audio/just_audio.dart';
 import 'package:mesbaha/app/azkar/azkar_builder.dart';
 import 'package:mesbaha/app/azkar/data/dark_azkar.dart';
 import 'package:mesbaha/app/themes/color.dart';
-import 'package:vector_math/vector_math_64.dart';
 
 class DarkAzkar extends StatefulWidget {
   final azkar;
@@ -20,10 +19,11 @@ class _DarkAzkarState extends State<DarkAzkar> with TickerProviderStateMixin {
   bool isExpand = true;
   AnimationController controller;
   AudioPlayer player;
+  AnimationController animationController;
+  Animation<Matrix4> animation;
+  TransformationController transformationController;
+  TapDownDetails tapDownDetails;
 
-  AnimationController zoomController;
-
-  Animation<double> zoomAnimation;
   @override
   void initState() {
     super.initState();
@@ -32,15 +32,14 @@ class _DarkAzkarState extends State<DarkAzkar> with TickerProviderStateMixin {
         vsync: this,
         duration: const Duration(milliseconds: 400),
         reverseDuration: const Duration(milliseconds: 400));
-    zoomController = AnimationController(
-        vsync: this,
-        duration: const Duration(milliseconds: 500),
-        reverseDuration: const Duration(milliseconds: 500));
-    zoomAnimation = Tween<double>(begin: 1.0, end: 2).animate(
-        CurvedAnimation(parent: zoomController, curve: Curves.easeInOut))
+    animationController = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 300))
       ..addListener(() {
-        setState(() {});
+        transformationController.value = animation.value;
       });
+
+    ///
+    transformationController = TransformationController();
   }
 
   @override
@@ -48,6 +47,8 @@ class _DarkAzkarState extends State<DarkAzkar> with TickerProviderStateMixin {
     super.dispose();
     controller.dispose();
     player.dispose();
+    animationController.dispose();
+    transformationController.dispose();
   }
 
   @override
@@ -84,28 +85,44 @@ class _DarkAzkarState extends State<DarkAzkar> with TickerProviderStateMixin {
           interactive: true,
           radius: const Radius.circular(15),
           thickness: 8,
-          child: InkWell(
+          child: GestureDetector(
+            onDoubleTapDown: (details) => tapDownDetails = details,
             onDoubleTap: () {
-              if (zoomController.isCompleted) {
-                zoomController.reverse();
-              } else {
-                zoomController.forward();
-              }
+              const double scale = 2; // 3x zoom
+              final position = tapDownDetails.localPosition;
+              final x = -position.dx * (scale - 1);
+              final y = -position.dy * (scale - 1);
+
+              ///
+              final zoomed = Matrix4.identity()
+                ..translate(x, y)
+                ..scale(scale);
+              final end = transformationController.value.isIdentity()
+                  ? zoomed
+                  : Matrix4.identity();
+
+              animation =
+                  Matrix4Tween(begin: transformationController.value, end: end)
+                      .animate(CurveTween(curve: Curves.easeOut)
+                          .animate(animationController));
+              animationController.forward(from: 0);
             },
-            child: Transform(
-              alignment: FractionalOffset.center,
-              transform: Matrix4.diagonal3(Vector3(zoomAnimation.value ?? 0,
-                  zoomAnimation.value ?? 0, zoomAnimation.value ?? 0)),
-              child: InteractiveViewer(
-                child: ListView.builder(
-                    itemBuilder: (context, index) => AzkarBuilder(
-                          azkarText: darkAzkar['azkar'][index],
-                          count: darkAzkar['count'][index],
-                          profet: darkAzkar['profit'][index],
-                          countIndex: darkAzkar['countIndex'][index],
-                        ),
-                    itemCount: darkAzkar['azkar'].length),
-              ),
+            child: InteractiveViewer(
+              transformationController: transformationController,
+
+              /// it will help to view over the full screen
+              // clipBehavior: Clip.none,
+              clipBehavior: Clip.none,
+              // panEnabled: false, // it will disable moving image
+              scaleEnabled: false,
+              child: ListView.builder(
+                  itemBuilder: (context, index) => AzkarBuilder(
+                        azkarText: darkAzkar['azkar'][index],
+                        count: darkAzkar['count'][index],
+                        profet: darkAzkar['profit'][index],
+                        countIndex: darkAzkar['countIndex'][index],
+                      ),
+                  itemCount: darkAzkar['azkar'].length),
             ),
           ),
         ),

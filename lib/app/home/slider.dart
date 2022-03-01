@@ -1,14 +1,33 @@
+// ignore_for_file: prefer_const_constructors_in_immutables
+
 import 'package:flutter/material.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:mesbaha/app/azkar/dark.dart';
 import 'package:mesbaha/app/azkar/light.dart';
+import 'package:mesbaha/app/azkar/notifecation/notifecation.dart';
 import 'package:mesbaha/app/themes/color.dart';
 
 import '../../custom_transition/up_to_down.dart';
 import '../azkar/azkar_sleep.dart';
-import '../azkar/notifecation/notifecation.dart';
 
-class SliderBuilder extends StatelessWidget {
-  const SliderBuilder({Key key}) : super(key: key);
+class SliderBuilder extends StatefulWidget {
+  SliderBuilder({Key key}) : super(key: key);
+
+  @override
+  State<SliderBuilder> createState() => _SliderBuilderState();
+}
+
+class _SliderBuilderState extends State<SliderBuilder> {
+  bool isScheduleDark = true;
+  bool isScheduleLight = true;
+  bool isScheduleSleep = true;
+  @override
+  void initState() {
+    super.initState();
+    isScheduleDark = GetStorage().read('isScheduleDark') ?? true;
+    isScheduleDark = GetStorage().read('isScheduleLight') ?? true;
+    isScheduleSleep = GetStorage().read('isScheduleSleep') ?? true;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -36,14 +55,49 @@ class SliderBuilder extends StatelessWidget {
       ListTile(
           onTap: () {
             if (index == 0) {
+              if (DateTime.now().hour > 3 &&
+                  DateTime.now().hour < 12 &&
+                  isScheduleLight) {
+                NotificationApi.notify(
+                  title: text,
+                  body: 'حان وقت اذكار الصباح',
+                  channelKey: 'lightAzkar',
+                  id: 0,
+                  notificationInterval: 84000,
+                );
+                NotificationApi.goToAzkarScreen(
+                    context,
+                    LightAzkar(
+                      azkar: text,
+                    ));
+                isScheduleLight = false;
+                GetStorage().write('isScheduleLight', isScheduleLight);
+              }
               Navigator.push(
                   context,
                   UpToDown(LightAzkar(
                     azkar: text,
                   )));
             } else if (index == 1) {
-              NotificationApi.showScheduledNotification(
-                  body: 'انه وقت $text', title: text, id: 0, payload: text);
+              if (DateTime.now().hour > 15 &&
+                  DateTime.now().hour < 19 &&
+                  isScheduleDark) {
+                NotificationApi.notify(
+                  title: text,
+                  body: 'حان وقت $text',
+                  channelKey: 'darkAzkar',
+                  id: 1,
+                  notificationInterval: 84000,
+                );
+                NotificationApi.goToAzkarScreen(
+                  context,
+                  DarkAzkar(
+                    azkar: text,
+                  ),
+                );
+                isScheduleDark = false;
+                GetStorage().write('isScheduleDark', isScheduleDark);
+              }
               Navigator.push(
                   context,
                   UpToDown(
@@ -52,6 +106,25 @@ class SliderBuilder extends StatelessWidget {
                       ),
                       alignment: Alignment.center));
             } else {
+              if (DateTime.now().hour > 19 &&
+                  DateTime.now().hour < 23 &&
+                  isScheduleSleep) {
+                NotificationApi.notify(
+                  title: text,
+                  body: 'حان وقت $text',
+                  channelKey: 'sleepAzkar',
+                  id: 2,
+                  notificationInterval: 84000,
+                );
+                NotificationApi.goToAzkarScreen(
+                  context,
+                  AzkarSleep(
+                    azkar: text,
+                  ),
+                );
+                isScheduleSleep = false;
+                GetStorage().write('isScheduleDark', isScheduleSleep);
+              }
               Navigator.push(
                   context,
                   UpToDown(

@@ -5,7 +5,6 @@ import 'package:just_audio/just_audio.dart';
 import 'package:mesbaha/app/azkar/data/light_azkar.dart';
 import 'package:mesbaha/app/themes/color.dart';
 import 'azkar_builder.dart';
-import 'package:vector_math/vector_math_64.dart';
 
 class LightAzkar extends StatefulWidget {
   final azkar;
@@ -18,8 +17,10 @@ class LightAzkar extends StatefulWidget {
 class _LightAzkarState extends State<LightAzkar> with TickerProviderStateMixin {
   AudioPlayer player;
   AnimationController controller;
-  AnimationController zoomController;
-  Animation zoomAnimation;
+  AnimationController animationController;
+  Animation<Matrix4> animation;
+  TransformationController transformationController;
+  TapDownDetails tapDownDetails;
   bool isExpand = true;
   @override
   void initState() {
@@ -29,15 +30,18 @@ class _LightAzkarState extends State<LightAzkar> with TickerProviderStateMixin {
         vsync: this,
         duration: const Duration(milliseconds: 400),
         reverseDuration: const Duration(milliseconds: 400));
-    zoomController = AnimationController(
+    controller = AnimationController(
         vsync: this,
-        duration: const Duration(milliseconds: 500),
-        reverseDuration: const Duration(milliseconds: 500));
-    zoomAnimation = Tween<double>(begin: 1.0, end: 2).animate(
-        CurvedAnimation(parent: zoomController, curve: Curves.easeInOut))
+        duration: const Duration(milliseconds: 400),
+        reverseDuration: const Duration(milliseconds: 400));
+    animationController = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 300))
       ..addListener(() {
-        setState(() {});
+        transformationController.value = animation.value;
       });
+
+    ///
+    transformationController = TransformationController();
   }
 
   @override
@@ -56,7 +60,20 @@ class _LightAzkarState extends State<LightAzkar> with TickerProviderStateMixin {
           title: Text(widget.azkar),
           actions: [
             IconButton(
-                onPressed: () async {},
+                onPressed: () async {
+                  await player.setAsset('assets/azkar.mp3');
+                  setState(() {
+                    if (isExpand) {
+                      player.play();
+                      controller.forward();
+                      isExpand = !isExpand;
+                    } else {
+                      player.stop();
+                      controller.reverse();
+                      isExpand = !isExpand;
+                    }
+                  });
+                },
                 icon: AnimatedIcon(
                   icon: AnimatedIcons.play_pause,
                   progress: controller,
@@ -68,57 +85,72 @@ class _LightAzkarState extends State<LightAzkar> with TickerProviderStateMixin {
           interactive: true,
           radius: const Radius.circular(15),
           thickness: 8,
-          child: InkWell(
+          child: GestureDetector(
+            onDoubleTapDown: (details) => tapDownDetails = details,
             onDoubleTap: () {
-              if (zoomController.isCompleted) {
-                zoomController.reverse();
-              } else {
-                zoomController.forward();
-              }
+              const double scale = 2; // 3x zoom
+              final position = tapDownDetails.localPosition;
+              final x = -position.dx * (scale - 1);
+              final y = -position.dy * (scale - 1);
+
+              ///
+              final zoomed = Matrix4.identity()
+                ..translate(x, y)
+                ..scale(scale);
+              final end = transformationController.value.isIdentity()
+                  ? zoomed
+                  : Matrix4.identity();
+
+              animation =
+                  Matrix4Tween(begin: transformationController.value, end: end)
+                      .animate(CurveTween(curve: Curves.easeOut)
+                          .animate(animationController));
+              animationController.forward(from: 0);
             },
-            child: Transform(
-              alignment: FractionalOffset.center,
-              transform: Matrix4.diagonal3(Vector3(zoomAnimation.value ?? 0,
-                  zoomAnimation.value ?? 0, zoomAnimation.value ?? 0)),
-              child: InteractiveViewer(
-                child: ListView.builder(
-                    itemBuilder: (context, index) => AzkarBuilder(
-                          azkarText: lightAzkar['azkar'][index],
-                          count: lightAzkar['count'][index],
-                          profet: lightAzkar['profit'][index],
-                          countIndex: lightAzkar['countIndex'][index],
-                        ),
-                    itemCount: lightAzkar['azkar'].length),
-              ),
+            child: InteractiveViewer(
+              transformationController: transformationController,
+
+              /// it will help to view over the full screen
+              // clipBehavior: Clip.none,
+              clipBehavior: Clip.none,
+              // panEnabled: false, // it will disable moving image
+              scaleEnabled: false,
+              child: ListView.builder(
+                  itemBuilder: (context, index) => AzkarBuilder(
+                        azkarText: lightAzkar['azkar'][index],
+                        count: lightAzkar['count'][index],
+                        profet: lightAzkar['profit'][index],
+                        countIndex: lightAzkar['countIndex'][index],
+                      ),
+                  itemCount: lightAzkar['azkar'].length),
             ),
           ),
         ),
         floatingActionButton: Container(
-          decoration: BoxDecoration(
-              border: Border.all(color: floatingColor, width: 2),
-              shape: BoxShape.circle),
-          child: FloatingActionButton(
-            backgroundColor: mainColor[index],
-            onPressed: () async {
-              await player.setAsset('assets/azkar.mp3');
-              setState(() {
-                if (isExpand) {
-                  player.play();
-                  controller.forward();
-                  isExpand = !isExpand;
-                } else {
-                  player.stop();
-                  controller.reverse();
-                  isExpand = !isExpand;
-                }
-              });
-            },
-            child: AnimatedIcon(
-              icon: AnimatedIcons.play_pause,
-              progress: controller,
-            ),
-          ),
-        ),
+            decoration: BoxDecoration(
+                border: Border.all(color: floatingColor, width: 2),
+                shape: BoxShape.circle),
+            child: FloatingActionButton(
+              backgroundColor: mainColor[index],
+              onPressed: () async {
+                await player.setAsset('assets/azkar.mp3');
+                setState(() {
+                  if (isExpand) {
+                    player.play();
+                    controller.forward();
+                    isExpand = !isExpand;
+                  } else {
+                    player.stop();
+                    controller.reverse();
+                    isExpand = !isExpand;
+                  }
+                });
+              },
+              child: AnimatedIcon(
+                icon: AnimatedIcons.play_pause,
+                progress: controller,
+              ),
+            )),
       ),
     );
   }

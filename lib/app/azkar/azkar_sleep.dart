@@ -3,7 +3,6 @@
 import 'package:flutter/material.dart';
 import 'package:mesbaha/app/azkar/azkar_builder.dart';
 import 'package:mesbaha/app/themes/color.dart';
-import 'package:vector_math/vector_math_64.dart';
 import 'data/sleep_azkar.dart';
 
 class AzkarSleep extends StatefulWidget {
@@ -17,23 +16,32 @@ class AzkarSleep extends StatefulWidget {
 
 class _AzkarSleepState extends State<AzkarSleep>
     with SingleTickerProviderStateMixin {
-  AnimationController zoomController;
+  // AnimationController zoomController;
 
-  Animation<double> zoomAnimation;
+  // Animation<Matrix4> zoomAnimation;
+  AnimationController animationController;
+  Animation<Matrix4> animation;
+  TransformationController transformationController;
+  TapDownDetails tapDownDetails;
 
   @override
   void initState() {
     super.initState();
-
-    zoomController = AnimationController(
-        vsync: this,
-        duration: const Duration(milliseconds: 500),
-        reverseDuration: const Duration(milliseconds: 500));
-    zoomAnimation = Tween<double>(begin: 1.0, end: 2).animate(
-        CurvedAnimation(parent: zoomController, curve: Curves.easeInOut))
+    animationController = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 300))
       ..addListener(() {
-        setState(() {});
+        transformationController.value = animation.value;
       });
+
+    ///
+    transformationController = TransformationController();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    animationController.dispose();
+    transformationController.dispose();
   }
 
   @override
@@ -46,31 +54,43 @@ class _AzkarSleepState extends State<AzkarSleep>
             title: Text(widget.azkar),
             backgroundColor: mainColor[index],
           ),
-          body: InkWell(
+          body: GestureDetector(
+            onDoubleTapDown: (details) => tapDownDetails = details,
             onDoubleTap: () {
-              if (zoomAnimation.isCompleted) {
-                zoomController.reverse();
-              } else {
-                zoomController.forward();
-              }
+              const double scale = 2; // 3x zoom
+              final position = tapDownDetails.localPosition;
+              final x = -position.dx * (scale - 1);
+              final y = -position.dy * (scale - 1);
+
+              ///
+              final zoomed = Matrix4.identity()
+                ..translate(x, y)
+                ..scale(scale);
+              final end = transformationController.value.isIdentity()
+                  ? zoomed
+                  : Matrix4.identity();
+
+              animation =
+                  Matrix4Tween(begin: transformationController.value, end: end)
+                      .animate(CurveTween(curve: Curves.easeOut)
+                          .animate(animationController));
+              animationController.forward(from: 0);
             },
-            child: Transform(
-              alignment: FractionalOffset.center,
-              transform: Matrix4.diagonal3(Vector3(zoomAnimation.value ?? 0,
-                  zoomAnimation.value ?? 0, zoomAnimation.value ?? 0)),
-              child: InteractiveViewer(
-                child: ListView.builder(
-                  itemBuilder: (context, index) {
-                    return AzkarBuilder(
-                      azkarText: sleepAzkar['Azkar'][index],
-                      count: sleepAzkar['count'][index],
-                      countIndex: sleepAzkar['countIndex'][index],
-                      profet: sleepAzkar['profit'][index],
-                      sleepIndex: 0,
-                    );
-                  },
-                  itemCount: sleepAzkar['profit'].length,
-                ),
+            child: InteractiveViewer(
+              transformationController: transformationController,
+              clipBehavior: Clip.none,
+              scaleEnabled: false,
+              child: ListView.builder(
+                itemBuilder: (context, index) {
+                  return AzkarBuilder(
+                    azkarText: sleepAzkar['Azkar'][index],
+                    count: sleepAzkar['count'][index],
+                    countIndex: sleepAzkar['countIndex'][index],
+                    profet: sleepAzkar['profit'][index],
+                    sleepIndex: 0,
+                  );
+                },
+                itemCount: sleepAzkar['profit'].length,
               ),
             ),
           )),
