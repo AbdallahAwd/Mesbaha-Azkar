@@ -6,6 +6,9 @@ import 'package:mesbaha/app/azkar/azkar_builder.dart';
 import 'package:mesbaha/app/azkar/data/dark_azkar.dart';
 import 'package:mesbaha/app/themes/color.dart';
 
+import '../additions/public_folder.dart';
+import '../bannerAd/banner_ad.dart';
+
 class DarkAzkar extends StatefulWidget {
   final azkar;
 
@@ -115,14 +118,24 @@ class _DarkAzkarState extends State<DarkAzkar> with TickerProviderStateMixin {
               clipBehavior: Clip.none,
               // panEnabled: false, // it will disable moving image
               scaleEnabled: false,
-              child: ListView.builder(
-                  itemBuilder: (context, index) => AzkarBuilder(
-                        azkarText: darkAzkar['azkar'][index],
-                        count: darkAzkar['count'][index],
-                        profet: darkAzkar['profit'][index],
-                        countIndex: darkAzkar['countIndex'][index],
-                      ),
-                  itemCount: darkAzkar['azkar'].length),
+              child: Column(
+                children: [
+                  SizedBox(
+                    height: PublicVariables.isReady
+                        ? MediaQuery.of(context).size.height - 130
+                        : MediaQuery.of(context).size.height - 90,
+                    child: ListView.builder(
+                        itemBuilder: (context, index) => AzkarBuilder(
+                              azkarText: darkAzkar['azkar'][index],
+                              count: darkAzkar['count'][index],
+                              profet: darkAzkar['profit'][index],
+                              countIndex: darkAzkar['countIndex'][index],
+                            ),
+                        itemCount: darkAzkar['azkar'].length),
+                  ),
+                  const BoxAd(),
+                ],
+              ),
             ),
           ),
         ),

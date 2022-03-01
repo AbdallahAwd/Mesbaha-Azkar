@@ -2,8 +2,10 @@
 
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:mesbaha/app/additions/public_folder.dart';
 import 'package:mesbaha/app/azkar/data/light_azkar.dart';
 import 'package:mesbaha/app/themes/color.dart';
+import '../bannerAd/banner_ad.dart';
 import 'azkar_builder.dart';
 
 class LightAzkar extends StatefulWidget {
@@ -115,14 +117,24 @@ class _LightAzkarState extends State<LightAzkar> with TickerProviderStateMixin {
               clipBehavior: Clip.none,
               // panEnabled: false, // it will disable moving image
               scaleEnabled: false,
-              child: ListView.builder(
-                  itemBuilder: (context, index) => AzkarBuilder(
-                        azkarText: lightAzkar['azkar'][index],
-                        count: lightAzkar['count'][index],
-                        profet: lightAzkar['profit'][index],
-                        countIndex: lightAzkar['countIndex'][index],
-                      ),
-                  itemCount: lightAzkar['azkar'].length),
+              child: Column(
+                children: [
+                  SizedBox(
+                    height: PublicVariables.isReady
+                        ? MediaQuery.of(context).size.height - 130
+                        : MediaQuery.of(context).size.height - 90,
+                    child: ListView.builder(
+                        itemBuilder: (context, index) => AzkarBuilder(
+                              azkarText: lightAzkar['azkar'][index],
+                              count: lightAzkar['count'][index],
+                              profet: lightAzkar['profit'][index],
+                              countIndex: lightAzkar['countIndex'][index],
+                            ),
+                        itemCount: lightAzkar['azkar'].length),
+                  ),
+                  const BoxAd(),
+                ],
+              ),
             ),
           ),
         ),

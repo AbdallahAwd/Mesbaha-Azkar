@@ -28,13 +28,14 @@ environment:
 # versions available, run `flutter pub outdated`.
 dependencies:
   auto_size_text: ^3.0.0
+  awesome_notifications: ^0.6.21
   cupertino_icons: ^1.0.2
   digital_lcd: ^1.0.2
   flutter:
     sdk: flutter
   flutter_slider_drawer: ^2.1.1
-  awesome_notifications: ^0.6.21
   get_storage: ^2.0.3
+  google_mobile_ads: ^1.1.0
   just_audio: ^0.7.4+1
 
 dev_dependencies:

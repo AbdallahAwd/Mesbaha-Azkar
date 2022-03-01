@@ -2,13 +2,14 @@ import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:mesbaha/app/azkar/notifecation/notifecation.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 import 'app/home/home.dart';
 import 'app/themes/color.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  MobileAds.instance.initialize();
   await GetStorage.init();
   index = GetStorage().read('themeIndex') ?? 0;
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);

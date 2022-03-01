@@ -10,6 +10,7 @@ import 'package:mesbaha/app/home/slider.dart';
 import 'package:mesbaha/app/themes/color.dart';
 
 import '../azkar/data/azkar_notification.dart';
+import '../bannerAd/banner_ad.dart';
 
 class Home extends StatefulWidget {
   const Home({Key key}) : super(key: key);
@@ -278,6 +279,10 @@ class _HomeState extends State<Home> {
                     ),
                   ],
                 ),
+                SizedBox(
+                  height: MediaQuery.of(context).size.height - 690,
+                ),
+                const BoxAd(),
               ],
             ),
           ),
