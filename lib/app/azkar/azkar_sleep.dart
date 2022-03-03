@@ -78,9 +78,12 @@ class _AzkarSleepState extends State<AzkarSleep>
             },
             child: InteractiveViewer(
               transformationController: transformationController,
-              clipBehavior: Clip.none,
-              scaleEnabled: false,
+              // clipBehavior: Clip.none,
+              clipBehavior: Clip.antiAliasWithSaveLayer,
+              // scaleEnabled: false,
+
               child: ListView.builder(
+                physics: const BouncingScrollPhysics(),
                 itemBuilder: (context, index) {
                   return AzkarBuilder(
                     azkarText: sleepAzkar['Azkar'][index],

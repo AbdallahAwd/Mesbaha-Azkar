@@ -89,7 +89,7 @@ class _LightAzkarState extends State<LightAzkar> with TickerProviderStateMixin {
           child: GestureDetector(
             onDoubleTapDown: (details) => tapDownDetails = details,
             onDoubleTap: () {
-              const double scale = 2; // 3x zoom
+              const double scale = 1.5; // 2x zoom
               final position = tapDownDetails.localPosition;
               final x = -position.dx * (scale - 1);
               final y = -position.dy * (scale - 1);
@@ -113,14 +113,15 @@ class _LightAzkarState extends State<LightAzkar> with TickerProviderStateMixin {
 
               /// it will help to view over the full screen
               // clipBehavior: Clip.none,
-              clipBehavior: Clip.none,
+              clipBehavior: Clip.antiAliasWithSaveLayer,
               // panEnabled: false, // it will disable moving image
-              scaleEnabled: false,
+              // scaleEnabled: false,
               child: Column(
                 children: [
                   SizedBox(
                     height: MediaQuery.of(context).size.height - 130,
                     child: ListView.builder(
+                        physics: const BouncingScrollPhysics(),
                         itemBuilder: (context, index) => AzkarBuilder(
                               azkarText: lightAzkar['azkar'][index],
                               count: lightAzkar['count'][index],

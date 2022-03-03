@@ -5,7 +5,7 @@
 
    <application
         android:usesCleartextTraffic="true"
-        android:label="مسبحه الكترونيه"
+        android:label="مسبحة الكترونية"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

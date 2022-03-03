@@ -14,7 +14,7 @@ Future<void> main() async {
   index = GetStorage().read('themeIndex') ?? 0;
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   AwesomeNotifications().initialize(
-    null,
+    'resource://drawable/islam',
     [
       NotificationChannel(
         channelKey: 'lightAzkar',
@@ -55,6 +55,7 @@ Future<void> main() async {
         playSound: true,
         enableLights: true,
         enableVibration: true,
+        importance: NotificationImportance.Max,
       ),
     ],
   );
@@ -68,7 +69,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'مسبحه الكترونيه',
+      title: 'مسبحة الكترونية',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
           primarySwatch: Colors.blue,

@@ -209,7 +209,7 @@ class _HomeState extends State<Home> {
                               channelKey: 'Azkar',
                               id: 3,
                               locked: false,
-                              notificationInterval: 11000);
+                              notificationInterval: 8000);
                         },
                         child: Container(
                           width: 100,

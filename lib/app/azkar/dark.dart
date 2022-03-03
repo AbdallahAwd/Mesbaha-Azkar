@@ -114,14 +114,15 @@ class _DarkAzkarState extends State<DarkAzkar> with TickerProviderStateMixin {
 
               /// it will help to view over the full screen
               // clipBehavior: Clip.none,
-              clipBehavior: Clip.none,
+              clipBehavior: Clip.antiAliasWithSaveLayer,
               // panEnabled: false, // it will disable moving image
-              scaleEnabled: false,
+              // scaleEnabled: false,
               child: Column(
                 children: [
                   SizedBox(
                     height: MediaQuery.of(context).size.height - 130,
                     child: ListView.builder(
+                        physics: const BouncingScrollPhysics(),
                         itemBuilder: (context, index) => AzkarBuilder(
                               azkarText: darkAzkar['azkar'][index],
                               count: darkAzkar['count'][index],
